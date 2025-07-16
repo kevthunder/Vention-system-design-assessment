@@ -127,6 +127,7 @@ flowchart TD
     Frontend <--> BFF
 
     Feed[Home feed & recommendation Service]
+    VideoDB[(Video metadata)]
     BFF <--> Feed
     Feed ---- VideoDB
 ```

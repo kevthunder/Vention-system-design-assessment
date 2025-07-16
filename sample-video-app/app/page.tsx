@@ -1,5 +1,5 @@
 
-import VideoList from "./components/VideoList";
+import VideoList from "./ui/VideoList";
 
 export default function Home() {
   const videos = [

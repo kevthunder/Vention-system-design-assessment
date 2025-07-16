@@ -32,3 +32,8 @@ You are expected to spend less than 5 hours on this assignment; you will have 1 
  
 ### What you will be assessed on
 This is a relatively open-ended assessment, and we want you to feel free to design and build whatever you think best displays your abilities. We will expect that you can develop a simple React App, and that you can design a system given basic business requirements. Everything else is optional, but appreciated. **Please fork this repository, and upload everything associated with your submission to your forked repository. Make sure to share your forked repository with us before the deadline.** If any part of your submission is an application or service that can be ran, please include instructions for how to run it. 
+
+
+# Structure
+- docs : Architecture design 
+- sample-video-app : React app

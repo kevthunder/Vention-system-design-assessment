@@ -1,276 +1,280 @@
 # YouTube Clone App
 
-The goal of this project is to create a video-sharing and streaming platform, a YouTube "clone". 
+The goal of this project is to create a video-sharing and streaming platform, a YouTube "clone".
 
-## Components 
+## Components
 
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
     Auth[Authentication Service]
-    AuthDB[(User credentials)]
-    BFF <--> Auth --- AuthDB
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF <--> User --- UserDB
+    AuthDb[(User Credentials)]
+    BFF <--> Auth --- AuthDb
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF <--> User --- UserDb
     Encode[Video Processing/Transcoding Service]
     Storage[(Cloud Storage)]
     Storage -- stream ---> Frontend
-    Encode -- new video --- VideoDB
+    Encode -- new video --- VideoDb
     BFF <--> Channel -- upload --> Encode --> Storage
     Search[Search Service]
-    VideoDB[(Video metadata)]
+    VideoDb[(Video Metadata)]
     BFF <--> Search
-    Search ---- VideoDB
-    Channel[Channel service]
-    ChannelDB[(Channel information)]
-    Channel -- "Title, description, etc..." --> VideoDB
-    Channel --- ChannelDB
-    Feed[Home feed & recommendation Service]
+    Search ---- VideoDb
+    Channel[Channel Service]
+    ChannelDb[(Channel Information)]
+    Channel -- "Title, Description, etc..." --> VideoDb
+    Channel --- ChannelDb
+    Feed[Home Feed & Recommendation Service]
     BFF <--> Feed
-    Feed ---- VideoDB
-    Metric[Metrics service]
-    BigData[("BigData")]
-    BFF <--> Metric
-    Metric -- Audiance targetting data ---> VideoDB
-    Metric --- BigData
-    FeedBack[FeedBack Service]
-    FeedBackDB[("Likes, comments, etc...")]
-    BFF <--> FeedBack --- FeedBackDB
+    Feed ---- VideoDb
+    Metrics[Metrics Service]
+    BigData[Big Data]
+    BFF <--> Metrics
+    Metrics -- Audience Targeting Data ---> VideoDb
+    Metrics --- BigData
+    Feedback[Feedback Service]
+    FeedbackDb[(Likes, Comments, etc...)]
+    BFF <--> Feedback --- FeedbackDb
 ```
 ![Components Diagram](./Components.png)
 
-### Frontend and BFF (Backend For Frontend)
-- React.js, next.js, typescript
-- could use GraphQL for the BFF
+
+### Frontend and BFF (Backend for Frontend)
+- React.js, Next.js, TypeScript
+- Could use GraphQL for the BFF
 
 Responsible for rendering the user interface, handling user interactions, and making API requests to the backends.
 
+
 ### Cloud Storage
-- AWS S3 or Google Cloud Storage or Azure Storage
+- AWS S3, Google Cloud Storage or Azure Storage
 
 Stores the video files and thumbnails
 
+
 ### Video Processing/Transcoding Service
-- Self-hosted (FFmpeg) or Cloud Video Processing Services (AWS Elemental MediaConvert, Google Cloud Video Intelligence API, Azure Media Services )
+- Self-hosted (FFmpeg) or Cloud Video Processing Services (AWS Elemental MediaConvert, Google Cloud Video Intelligence API, Azure Media Services)
 
 Converts uploaded videos into various formats and resolutions suitable for streaming across different devices
 
-### micro service backends
-while 20,000 and 50,000 Daily Active Users could be handled by one backend and one DB, Using multiple services will make the project more future proof and better structure the project
+
+### Microservice Backends
+While 20,000 to 50,000 Daily Active Users could be handled by one backend and one database, using multiple services will make the project more future-proof and better structure the project.
+
 
 #### Authentication Service
+Handles usernames, passwords, authentication tokens.
+- Node.js
+- Server (Express) or serverless (AWS Lambda) or 3rd party
+- DB: Relational (PostgreSQL)
 
-usernames, passwords, Authentication Tokens
-- nodejs
-- server (express) or serverless (aws lambda) or 3rd party
-- DB: relational(PostgreSQL)
 
-#### User profiles service
+#### User Profiles Service
+Manages personal info, favorites, likes, subscriptions, history.
+- Node.js
+- Server (Express) or serverless (AWS Lambda)
+- DB: Relational (PostgreSQL)
 
-personal info, favorites, personal likes, subscriptions, history
-- nodejs
-- server (express) or serverless (aws lambda)
-- DB: relational(PostgreSQL)
 
-#### Channel service
+#### Channel Service
+For users who upload videos, manages channel info and subscriber count.
+- Node.js
+- Server (Express) or serverless (AWS Lambda)
+- DB: Relational (PostgreSQL)
 
-for people that upload videos, channels info, subscriber count
-- nodejs
-- server (express) or serverless (aws lambda)
-- DB: relational(PostgreSQL)
 
 #### Search Service
-
-returns a video list given a search query, indexation, show meta data for current video
-- nodejs
-- server (express) or serverless (aws lambda)
-- DB: relational(PostgreSQL) or indexing (elasticsearch) depending on the budget
-
-#### Home feed & recommendation Service
-
-Give a list of video to show on an user (or anonymous user) homepage or any other feeds
-- nodejs
-- server (express) or serverless (aws lambda)
-- DB: relational(PostgreSQL)
-
-#### FeedBack Service
-Like and comments on videos. 
-- nodejs
-- server (express) or serverless (aws lambda)
-- DB: Key value  (redis, dynamo db)
-
-#### Metrics service
-Collects data about everything. Could be used to find out which audience like which kind of videos
-- 3rd party (datadog) or in house data engineering team's service
+Returns a video list given a search query, handles indexing, shows metadata for current video.
+- Node.js
+- Server (Express) or serverless (AWS Lambda)
+- DB: Relational (PostgreSQL) or indexing (Elasticsearch) depending on the budget
 
 
-## User interactions and flows
+#### Home Feed & Recommendation Service
+Provides a list of videos to show on a user's (or anonymous user's) homepage or other feeds.
+- Node.js
+- Server (Express) or serverless (AWS Lambda)
+- DB: Relational (PostgreSQL)
+
+
+#### Feedback Service
+Handles likes and comments on videos.
+- Node.js
+- Server (Express) or serverless (AWS Lambda)
+- DB: Key-value (Redis, DynamoDB)
+
+
+#### Metrics Service
+Collects data about everything. Can be used to find out which audience likes which kind of videos.
+- 3rd party (Datadog) or in-house data engineering team's service
+
+
+## User Interactions and Flows
 ### User Authentication
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
     Auth[Authentication Service]
-    AuthDB[(User credentials)]
-    BFF <--> Auth --- AuthDB
+    AuthDb[(User Credentials)]
+    BFF <--> Auth --- AuthDb
 ```
 ### Trending and Recommended Videos
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF -- Get user's audience type, subscriptions  <--> User --- UserDB
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF -- Get user's audience type, subscriptions  <--> User --- UserDb
 
-    Feed[Home feed & recommendation Service]
-    VideoDB[(Video metadata)]
+    Feed[Home Feed & Recommendation Service]
+    VideoDb[(Video Metadata)]
     BFF <--> Feed
-    Feed ---- VideoDB
+    Feed ---- VideoDb
 ```
 
-### Video page
+### Video Page
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
     Search[Search Service]
-    VideoDB[(Video metadata)]
+    VideoDb[(Video Metadata)]
     BFF -- current video metadata, stream url<--> Search
-    Search ---- VideoDB
+    Search ---- VideoDb
 
-    Feed[Home feed & recommendation Service]
+    Feed[Home Feed & Recommendation Service]
     BFF -- What to watch next <--> Feed
-    Feed ---- VideoDB
+    Feed ---- VideoDb
 
-    FeedBack[FeedBack Service]
-    FeedBackDB[("Likes, comments, etc...")]
-    BFF -- number of Likes, top comments <--> FeedBack --- FeedBackDB
+    Feedback[Feedback Service]
+    FeedbackDb[(Likes, Comments, etc...)]
+    BFF -- number of Likes, top comments <--> Feedback --- FeedbackDb
 ```
-### Video Playback and save progress in history
-
+### Video Playback and Save Progress in History
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
     Storage[(Cloud Storage)]
     Storage -- stream ---> Frontend
 
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF -- History <--> User --- UserDB
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF -- History <--> User --- UserDb
 ```
 ### Video Upload
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
-    VideoDB[(Video metadata)]
+    BFF[Backend for Frontend]
+    VideoDb[(Video Metadata)]
     Frontend <--> BFF
 
     Encode[Video Processing/Transcoding Service]
     Storage[(Cloud Storage)]
-    Encode -- new video --- VideoDB
+    Encode -- new video --- VideoDb
     BFF <--> Channel -- upload --> Encode --> Storage
 
-    Channel[Channel service]
-    ChannelDB[(Channel information)]
-    Channel -- "Title, description, etc..." --> VideoDB
-    Channel -- add video id to channel list--- ChannelDB
+    Channel[Channel Service]
+    ChannelDb[(Channel Information)]
+    Channel -- "Title, Description, etc..." --> VideoDb
+    Channel -- add video id to channel list--- ChannelDb
 ```
 
-### retrieve History
+### Retrieve History
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF -- Get history videos ids <--> User --- UserDB
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF -- Get history videos ids <--> User --- UserDb
 
     Search[Search Service]
-    VideoDB[(Video metadata)]
+    VideoDb[(Video Metadata)]
     BFF -- get videos by ids <--> Search
-    Search --- VideoDB
+    Search --- VideoDb
 ```
 
 ### Search
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
     Search[Search Service]
-    VideoDB[(Video metadata)]
+    VideoDb[(Video Metadata)]
     BFF <--> Search
-    Search ---- VideoDB
+    Search ---- VideoDb
 ```
 
 ### Video Interactions
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
-    FeedBack[FeedBack Service]
-    FeedBackDB[("Likes, comments, etc...")]
-    BFF -- "Likes, comments, etc..." <--> FeedBack --- FeedBackDB
+    Feedback[Feedback Service]
+    FeedbackDb[(Likes, Comments, etc...)]
+    BFF -- "Likes, comments, etc..." <--> Feedback --- FeedbackDb
 
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF -- Likes and comments history <--> User --- UserDB
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF -- Likes and comments history <--> User --- UserDb
 ```
 
 ### Channel Subscriptions
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend <--> BFF
 
-    User[User profiles service]
-    UserDB[(User information, history, etc...)]
-    BFF <--> User -- Channel Id --- UserDB
+    User[User Profiles Service]
+    UserDb[(User Information, History, etc...)]
+    BFF <--> User -- Channel Id --- UserDb
 
-    Channel[Channel service]
-    ChannelDB[(Channel information)]
-    BFF <--> Channel -- User Id --- ChannelDB
+    Channel[Channel Service]
+    ChannelDb[(Channel Information)]
+    BFF <--> Channel -- User Id --- ChannelDb
 ```
 
-### Tracking user actions 
+### Tracking User Actions
 ```mermaid
 flowchart TD
     Frontend[Frontend]
-    BFF[Backend For Frontend]
+    BFF[Backend for Frontend]
     Frontend --> BFF
-    
-    Metric[Metrics service]
-    BigData[("BigData")]
-    BFF -- any user action --> Metric
-    Metric --> BigData
-```
-### Use Tracked user actions to create audience targeting data
 
+    Metrics[Metrics Service]
+    BigData[Big Data]
+    BFF -- any user action --> Metrics
+    Metrics --> BigData
+```
+### Use Tracked User Actions to Create Audience Targeting Data
 ```mermaid
 flowchart TD
-    VideoDB[(Video metadata)]
-    Metric[Metrics service]
-    BigData[("BigData")]
-    Metric -- Audiance targetting data ---> VideoDB
-    Metric --- BigData
+    VideoDb[(Video Metadata)]
+    Metrics[Metrics Service]
+    BigData[Big Data]
+    Metrics -- Audience Targeting Data ---> VideoDb
+    Metrics --- BigData
 ```

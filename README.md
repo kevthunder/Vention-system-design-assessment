@@ -35,5 +35,6 @@ This is a relatively open-ended assessment, and we want you to feel free to desi
 
 
 # Structure
-- docs : Architecture design 
-- sample-video-app : React app
+- `docs` : Architecture design 
+- `sample-video-app` : React app for the front end and BFF
+- `feed-recommendation-api` : simple API example for the home feed

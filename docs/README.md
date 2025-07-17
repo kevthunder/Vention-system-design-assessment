@@ -2,7 +2,7 @@
 
 The goal of this project is to create a video-sharing and streaming platform, a YouTube "clone".
 
-## Components
+# Components
 
 ```mermaid
 flowchart TD
@@ -43,78 +43,110 @@ flowchart TD
 ![Components Diagram](./Components.png)
 
 
-### Frontend and BFF (Backend for Frontend)
+## Frontend and BFF (Backend for Frontend)
 - React.js, Next.js, TypeScript
 - Could use GraphQL for the BFF
 
 Responsible for rendering the user interface, handling user interactions, and making API requests to the backends.
 
 
-### Cloud Storage
+## Cloud Storage
 - AWS S3, Google Cloud Storage or Azure Storage
 
 Stores the video files and thumbnails
 
 
-### Video Processing/Transcoding Service
+## Video Processing/Transcoding Service
 - Self-hosted (FFmpeg) or Cloud Video Processing Services (AWS Elemental MediaConvert, Google Cloud Video Intelligence API, Azure Media Services)
 
 Converts uploaded videos into various formats and resolutions suitable for streaming across different devices
 
 
-### Microservice Backends
+
+## Microservice Backends
 While 20,000 to 50,000 Daily Active Users could be handled by one backend and one database, using multiple services will make the project more future-proof and better structure the project.
 
-
-#### Authentication Service
+### Authentication Service
 Handles usernames, passwords, authentication tokens.
 - Node.js
 - Server (Express) or serverless (AWS Lambda) or 3rd party
 - DB: Relational (PostgreSQL)
 
+#### Example API Endpoints
+- `POST /api/auth/login` — Authenticate user and return token
+- `POST /api/auth/register` — Register a new user
+- `POST /api/auth/logout` — Invalidate user session
 
-#### User Profiles Service
+### User Profiles Service
 Manages personal info, favorites, likes, subscriptions, history.
 - Node.js
 - Server (Express) or serverless (AWS Lambda)
 - DB: Relational (PostgreSQL)
 
+#### Example API Endpoints
+- `GET /api/users/:id` — Get user profile
+- `PUT /api/users/:id` — Update user profile
+- `GET /api/users/:id/history` — Get user watch history
+- `POST /api/users/:id/history/video/:id` — Save progression on a video
+- `GET /api/users/:id/favorites` — Get user favorite videos
+- `POST /api/users/:id/favorites` — Add a video to the user favorites
+- `GET /api/users/:id/subscriptions` — Get user subscribed chanel
+- `POST /api/users/:id/subscriptions` — Add a channel to the user subscriptions
 
-#### Channel Service
+### Channel Service
 For users who upload videos, manages channel info and subscriber count.
 - Node.js
 - Server (Express) or serverless (AWS Lambda)
 - DB: Relational (PostgreSQL)
 
+#### Example API Endpoints
+- `GET /api/channels/:id` — Get channel info
+- `GET /api/channels/:id/videos` — List videos for a channel
+- `POST /api/channels/:id/videos` — upload a new video to a channel
+- `GET /api/channels/:id/subscribers` — List subscribers to a channel
 
-#### Search Service
+### Search Service
 Returns a video list given a search query, handles indexing, shows metadata for current video.
 - Node.js
 - Server (Express) or serverless (AWS Lambda)
 - DB: Relational (PostgreSQL) or indexing (Elasticsearch) depending on the budget
 
+#### Example API Endpoints
+- `GET /api/search?q=keyword` — Search for videos by keyword or any query
 
-#### Home Feed & Recommendation Service
+### Home Feed & Recommendation Service
 Provides a list of videos to show on a user's (or anonymous user's) homepage or other feeds.
 - Node.js
 - Server (Express) or serverless (AWS Lambda)
 - DB: Relational (PostgreSQL)
 
+#### Example API Endpoints
+- `GET /api/feed` — Get recommended videos for homepage
+- `GET /api/feed/trending` — Get trending videos
+- `GET /api/feed/videos/:id` — Get the "watch next" feed on a video
 
-#### Feedback Service
+### Feedback Service
 Handles likes and comments on videos.
 - Node.js
 - Server (Express) or serverless (AWS Lambda)
 - DB: Key-value (Redis, DynamoDB)
 
+#### Example API Endpoints
+- `POST /api/likes/videos/:id` — Like a video
+- `Get /api/likes/videos/:id` — Get the number of Likes on a video
+- `POST /api/comments/videos/:id` — Add a comment to a video
+- `GET /api/comments/videos/:id` — Get comments for a video
 
-#### Metrics Service
+### Metrics Service
 Collects data about everything. Can be used to find out which audience likes which kind of videos.
 - 3rd party (Datadog) or in-house data engineering team's service
 
+#### Example API Endpoints
+- `POST /api/metrics/event` — Track a user event (view, like, etc.)
+- `GET /api/metrics/video/:id` — Get metrics for a video
 
-## User Interactions and Flows
-### User Authentication
+# User Interactions and Flows
+## User Authentication
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -125,7 +157,7 @@ flowchart TD
     AuthDb[(User Credentials)]
     BFF <--> Auth --- AuthDb
 ```
-### Trending and Recommended Videos
+## Getting Trending and Recommended Videos
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -142,7 +174,7 @@ flowchart TD
     Feed ---- VideoDb
 ```
 
-### Video Page
+## User is Seeing a Video Page
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -162,7 +194,7 @@ flowchart TD
     FeedbackDb[(Likes, Comments, etc...)]
     BFF -- number of Likes, top comments <--> Feedback --- FeedbackDb
 ```
-### Video Playback and Save Progress in History
+## Video Playback and Save Progress in History
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -176,7 +208,7 @@ flowchart TD
     UserDb[(User Information, History, etc...)]
     BFF -- History <--> User --- UserDb
 ```
-### Video Upload
+## Video Upload
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -195,7 +227,7 @@ flowchart TD
     Channel -- add video id to channel list--- ChannelDb
 ```
 
-### Retrieve History
+## Retrieve History
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -212,7 +244,7 @@ flowchart TD
     Search --- VideoDb
 ```
 
-### Search
+## Search
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -225,7 +257,8 @@ flowchart TD
     Search ---- VideoDb
 ```
 
-### Video Interactions
+## Video Interactions
+ex: User like a video, User comment on a video
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -241,7 +274,7 @@ flowchart TD
     BFF -- Likes and comments history <--> User --- UserDb
 ```
 
-### Channel Subscriptions
+## User subscribe to a Channel
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -257,7 +290,7 @@ flowchart TD
     BFF <--> Channel -- User Id --- ChannelDb
 ```
 
-### Tracking User Actions
+## Tracking User Actions
 ```mermaid
 flowchart TD
     Frontend[Frontend]
@@ -269,7 +302,7 @@ flowchart TD
     BFF -- any user action --> Metrics
     Metrics --> BigData
 ```
-### Use Tracked User Actions to Create Audience Targeting Data
+## Use Tracked User Actions to Create Audience Targeting Data
 ```mermaid
 flowchart TD
     VideoDb[(Video Metadata)]

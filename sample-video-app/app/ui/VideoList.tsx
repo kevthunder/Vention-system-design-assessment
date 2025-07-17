@@ -1,12 +1,6 @@
 'use client'
 import Image from "next/image";
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-}
+import type { Video } from "../types/video";
 
 interface VideoListProps {
   videos: Video[];

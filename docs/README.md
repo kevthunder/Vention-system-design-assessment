@@ -126,11 +126,16 @@ flowchart TD
     BFF[Backend For Frontend]
     Frontend <--> BFF
 
+    User[User profiles service]
+    UserDB[(User information, history, etc...)]
+    BFF -- Get user's audience type, subscriptions  <--> User --- UserDB
+
     Feed[Home feed & recommendation Service]
     VideoDB[(Video metadata)]
     BFF <--> Feed
     Feed ---- VideoDB
 ```
+
 ### Video page
 ```mermaid
 flowchart TD
@@ -183,6 +188,23 @@ flowchart TD
     ChannelDB[(Channel information)]
     Channel -- "Title, description, etc..." --> VideoDB
     Channel -- add video id to channel list--- ChannelDB
+```
+
+### retrieve History
+```mermaid
+flowchart TD
+    Frontend[Frontend]
+    BFF[Backend For Frontend]
+    Frontend <--> BFF
+
+    User[User profiles service]
+    UserDB[(User information, history, etc...)]
+    BFF -- Get history videos ids <--> User --- UserDB
+
+    Search[Search Service]
+    VideoDB[(Video metadata)]
+    BFF -- get videos by ids <--> Search
+    Search --- VideoDB
 ```
 
 ### Search
